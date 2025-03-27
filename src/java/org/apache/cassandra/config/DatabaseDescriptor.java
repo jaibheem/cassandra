@@ -3436,6 +3436,10 @@ public class DatabaseDescriptor
     {
         return conf.stream_entire_sstables;
     }
+    public static boolean isOptimizedStramingEnabled()
+    {
+        return conf.use_optimized_streaming;
+    }
 
     public static String getLocalDataCenter()
     {

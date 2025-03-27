@@ -41,6 +41,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.cassandra.config.DatabaseDescriptor;
 import org.apache.cassandra.db.Keyspace;
 import org.apache.cassandra.db.SystemKeyspace;
 import org.apache.cassandra.gms.FailureDetector;
@@ -330,10 +331,11 @@ public class RangeStreamer
             logger.info("{}: range {} exists on {} for keyspace {}", description, entry.getKey(), entry.getValue(), keyspaceName);
 
         Multimap<InetAddressAndPort, FetchReplica> workMap;
-        //Only use the optimized strategy if we don't care about strict sources, have a replication factor > 1, and no
+        //Only use the optimized strategy if user do not opt out, or we don't care about strict sources, have a replication factor > 1, and no
         //transient replicas.
-        if (useStrictSource || strat == null || strat.getReplicationFactor().allReplicas == 1 || strat.getReplicationFactor().hasTransientReplicas())
+        if (!DatabaseDescriptor.isOptimizedStramingEnabled() || useStrictSource || strat == null || strat.getReplicationFactor().allReplicas == 1 || strat.getReplicationFactor().hasTransientReplicas())
         {
+            logger.info("{}: skipping optimized path for keyspace {}", description, keyspaceName);
             workMap = convertPreferredEndpointsToWorkMap(fetchMap);
         }
         else

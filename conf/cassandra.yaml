@@ -1045,6 +1045,14 @@ uuid_sstable_identifiers_enabled: false
 # disabled if internode encryption is enabled.
 # stream_entire_sstables: true
 
+# When enabled, uses optimized way to stream the data from replica.
+# although this is supposed to improve the bootstrap performance and put less
+# pressure on the nodes serving data, in larger clusters with vnodes the node
+# can get stuck in calculating ranges indefinitely (see CASSANDRA-19633).
+# This option provides users to configure if they would like to disable the
+# optimized streaming.
+# use_optimized_streaming: true
+
 # Throttles entire SSTable outbound streaming file transfers on
 # this node to the given total throughput in Mbps.
 # Setting this value to 0 it disables throttling.
